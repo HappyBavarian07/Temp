@@ -53,7 +53,23 @@ class AdvancedObs:
                 (other_car.position - player_car.position) / self.POS_STD,
                 (other_car.linear_velocity - player_car.linear_velocity) / self.POS_STD
             ])
+        dummy_player = PlayerData()
+        for i in range(2-len([x for x in state.players if x.team_num == player.team_num])):
+            other_car = self._add_player_to_obs(allies, dummy_player, ball, inverted)
 
+            # Extra info
+            allies.extend([
+                (other_car.position - player_car.position) / self.POS_STD,
+                (other_car.linear_velocity - player_car.linear_velocity) / self.POS_STD
+            ])
+        for i in range(3-len([x for x in state.players if x.team_num != player.team_num])):
+            other_car = self._add_player_to_obs(enemies, dummy_player, ball, inverted)
+
+            # Extra info
+            enemies.extend([
+                (other_car.position - player_car.position) / self.POS_STD,
+                (other_car.linear_velocity - player_car.linear_velocity) / self.POS_STD
+            ])
         obs.extend(allies)
         obs.extend(enemies)
         return np.concatenate(obs)
